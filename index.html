@@ -55,15 +55,15 @@
                     if (data.status === "VALID") {
                         resBox.style.background = "#28cd41"; // Green
                         resBox.style.color = "white";
-                        resBox.innerHTML = "âœ… VALID<br><span style='font-size:16px'>" + data.name + "</span>";
+                        resBox.innerHTML = "✅ VALID<br><span style='font-size:16px'>" + data.name + "</span>";
                     } else if (data.status === "USED") {
                         resBox.style.background = "#ff9500"; // Orange
                         resBox.style.color = "white";
-                        resBox.innerHTML = "âš ï¸ ALREADY USED<br><span style='font-size:16px'>" + data.name + "</span>";
+                        resBox.innerHTML = "⚠️ ALREADY USED<br><span style='font-size:16px'>" + data.name + "</span>";
                     } else {
                         resBox.style.background = "#ff3b30"; // Red
                         resBox.style.color = "white";
-                        resBox.innerText = "âŒ INVALID";
+                        resBox.innerText = "❌ INVALID";
                     }
                     setTimeout(() => {
                         resBox.style.background = "#222";
