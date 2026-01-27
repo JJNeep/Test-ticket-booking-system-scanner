@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ticket Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="manifest.json">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; text-align: center; background: #111; color: white; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        h2 { margin: 20px 0 10px; }
+        #reader { width: 100%; flex-grow: 1; background: black; position: relative; overflow: hidden; }
+        #result { position: fixed; bottom: 0; left: 0; right: 0; padding: 30px; font-size: 24px; background: #222; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); transition: background 0.3s; height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .btn { position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); padding: 15px 40px; font-size: 18px; border-radius: 50px; border: none; background: #007aff; color: white; cursor: pointer; z-index: 10; box-shadow: 0 4px 10px rgba(0,122,255,0.4); }
+    </style>
+</head>
+<body>
+    <div id="reader"></div>
+    <button id="startBtn" class="btn" onclick="startScanner()">Start Camera</button>
+    <div id="result">Ready to scan...</div>
+
+    <script>
+        // --- PASTE YOUR GOOGLE SCRIPT URL HERE ---
+        const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec"; 
+
+        var html5QrcodeScanner;
+
+        function startScanner() {
+            document.getElementById("startBtn").style.display = "none";
+            html5QrcodeScanner = new Html5Qrcode("reader");
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                alert("Camera error: " + err);
+            });
+        }
+
+        function onScanSuccess(decodedText) {
+            html5QrcodeScanner.pause();
+            const resBox = document.getElementById("result");
+            resBox.style.background = "#ffd700"; // Yellow
+            resBox.style.color = "black";
+            resBox.innerText = "Checking...";
+
+            // Send data to Google Script (The Brain)
+            fetch(API_URL + "?id=" + encodeURIComponent(decodedText))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "VALID") {
+                        resBox.style.background = "#28cd41"; // Green
+                        resBox.style.color = "white";
+                        resBox.innerHTML = "âœ… VALID<br><span style='font-size:16px'>" + data.name + "</span>";
+                    } else if (data.status === "USED") {
+                        resBox.style.background = "#ff9500"; // Orange
+                        resBox.style.color = "white";
+                        resBox.innerHTML = "âš ï¸ ALREADY USED<br><span style='font-size:16px'>" + data.name + "</span>";
+                    } else {
+                        resBox.style.background = "#ff3b30"; // Red
+                        resBox.style.color = "white";
+                        resBox.innerText = "âŒ INVALID";
+                    }
+                    setTimeout(() => {
+                        resBox.style.background = "#222";
+                        resBox.innerText = "Ready...";
+                        html5QrcodeScanner.resume();
+                    }, 3000);
+                })
+                .catch(err => {
+                    resBox.style.background = "red";
+                    resBox.innerText = "Network Error";
+                    console.error(err);
+                });
+        }
+
+        function onScanFailure(error) {}
+    </script>
+</body>
+</html>
