@@ -101,9 +101,11 @@
         function onScanSuccess(decodedText) {
             html5QrcodeScanner.pause();
             const resBox = document.getElementById("result");
-            resBox.style.background = "#ffd700"; // Yellow
-            resBox.style.color = "black";
-            resBox.innerText = "Checking...";
+            if (resBox.style.background == "#222") {
+                resBox.style.background = "#ffd700"; // Yellow
+                resBox.style.color = "black";
+                resBox.innerText = "Checking...";
+            }
 
             // Send data to Google Script (The Brain)
             fetch(API_URL + "?id=" + encodeURIComponent(decodedText))
@@ -122,10 +124,10 @@
                         resBox.style.color = "white";
                         resBox.innerText = "INVALID";
                     }
+                    html5QrcodeScanner.resume();
                     setTimeout(() => {
                         resBox.style.background = "#222";
                         resBox.innerText = "Ready...";
-                        html5QrcodeScanner.resume();
                     }, 3000);
                 })
                 .catch(err => {
