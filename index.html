@@ -126,7 +126,7 @@
                     }
                     html5QrcodeScanner.resume();
                     setTimeout(() => {
-                        if (resBox.style.background == "#222") {
+                        if (html5QrcodeScanner.getState() == html5QrcodeScannerState.SCANNING) {
                             resBox.style.background = "#ffd700"; // Yellow
                             resBox.style.color = "black";
                             resBox.innerText = "Checking...";
