@@ -126,8 +126,14 @@
                     }
                     html5QrcodeScanner.resume();
                     setTimeout(() => {
-                        resBox.style.background = "#222";
-                        resBox.innerText = "Ready...";
+                        if (resBox.style.background == "#222") {
+                            resBox.style.background = "#ffd700"; // Yellow
+                            resBox.style.color = "black";
+                            resBox.innerText = "Checking...";
+                        } else {
+                            resBox.style.background = "#222";
+                            resBox.innerText = "Ready...";
+                        }
                     }, 3000);
                 })
                 .catch(err => {
