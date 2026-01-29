@@ -7,8 +7,8 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/qr_code_scanner_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.png",
-      "sizes": "24x24",
+      "src": "icon.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
